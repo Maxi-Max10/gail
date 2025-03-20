@@ -94,7 +94,7 @@
     .then(ipData => {
         console.log("📍 IP obtenida:", ipData.ip);
         
-        fetch(`http://ip-api.com/json/${ipData.ip}`) // Buscar ubicación más precisa
+        fetch(`http://ip-api.com/json/`) // Buscar ubicación más precisa
             .then(response => response.json())
             .then(locationData => {
                 console.log("📍 Ubicación detallada:", locationData);
@@ -118,6 +118,13 @@
     })
     .catch(error => console.error("❌ Error con ipinfo.io:", error));
 
+
+    function cambiarColor() {
+    const ball = document.getElementById("ball");
+    const colors = ["#007bff", "#ff0000", "#00ff00", "#ffcc00", "#ff00ff"];
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    ball.style.backgroundColor = randomColor;
+}
     </script>
 </body>
 </html>

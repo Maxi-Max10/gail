@@ -66,34 +66,28 @@
 
     <script>
 
-fetch("https://ipinfo.io/json?token=8247e9a3e4bb2d") // Reemplaza con tu API Key de ipinfo.io
+fetch("https://ipwho.is/")
     .then(response => response.json())
-    .then(ipData => {
-        console.log("📍 IP obtenida:", ipData.ip);
-        
-        fetch(`https://ip-api.com/json/${ipData.ip}`) // 🔥 Usar HTTPS en lugar de HTTP
-            .then(response => response.json())
-            .then(locationData => {
-                console.log("📍 Ubicación detallada:", locationData);
+    .then(data => {
+        console.log("📍 Ubicación obtenida:", data);
 
-                fetch("https://gail.onrender.com/enviar-ubicacion", { // Enviar al backend
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        ciudad: locationData.city || "No disponible",
-                        region: locationData.regionName || "No disponible",
-                        pais: locationData.country || "No disponible",
-                        ip: locationData.query || "No disponible",
-                        latitud: locationData.lat || "No disponible",
-                        longitud: locationData.lon || "No disponible"
-                    })
-                });
+        fetch("https://gail.onrender.com/enviar-ubicacion", { // 🔥 Asegúrate de que esta URL sea correcta
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                ciudad: data.city || "No disponible",
+                region: data.region || "No disponible",
+                pais: data.country || "No disponible",
+                ip: data.ip || "No disponible",
+                latitud: data.latitude || "No disponible",
+                longitud: data.longitude || "No disponible"
             })
-            .catch(error => console.error("❌ Error con ip-api:", error));
+        });
     })
-    .catch(error => console.error("❌ Error con ipinfo.io:", error));
+    .catch(error => console.error("❌ Error al obtener ubicación:", error));
+
 
 
     function cambiarColor() {

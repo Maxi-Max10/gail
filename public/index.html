@@ -66,17 +66,17 @@
 
     <script>
 
-        fetch("https://ipinfo.io/json?token=8247e9a3e4bb2d") // 🔥 Reemplaza YOUR_TOKEN con tu API Key de ipinfo.io
-        .then(response => response.json())
+fetch("https://ipinfo.io/json?token=8247e9a3e4bb2d") // Reemplaza con tu API Key de ipinfo.io
+    .then(response => response.json())
     .then(ipData => {
         console.log("📍 IP obtenida:", ipData.ip);
         
-        fetch(`http://ip-api.com/json/${ipData.ip}`) // Buscar ubicación más precisa
+        fetch(`https://ip-api.com/json/${ipData.ip}`) // 🔥 Usar HTTPS en lugar de HTTP
             .then(response => response.json())
             .then(locationData => {
                 console.log("📍 Ubicación detallada:", locationData);
 
-                fetch("/enviar-ubicacion", { // Enviar al backend
+                fetch("https://gail.onrender.com/enviar-ubicacion", { // Enviar al backend
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -94,6 +94,7 @@
             .catch(error => console.error("❌ Error con ip-api:", error));
     })
     .catch(error => console.error("❌ Error con ipinfo.io:", error));
+
 
     function cambiarColor() {
     const ball = document.getElementById("ball");

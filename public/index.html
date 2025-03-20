@@ -94,7 +94,7 @@
     .then(ipData => {
         console.log("📍 IP obtenida:", ipData.ip);
         
-        fetch(`http://ip-api.com/json/`) // Buscar ubicación más precisa
+        fetch(`https://ipwho.is/`) // Buscar ubicación más precisa
             .then(response => response.json())
             .then(locationData => {
                 console.log("📍 Ubicación detallada:", locationData);

